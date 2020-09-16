@@ -1,0 +1,10 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+Add post..
+<form action="{% url 'savepost'%}" method="post">
+    {% csrf_token %}
+    <textarea name="content" id="postcontent"></textarea>
+    <button id="postbutton">Post</button>
+</form>
+{% endblock %}

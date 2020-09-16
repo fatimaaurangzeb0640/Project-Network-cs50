@@ -1,0 +1,32 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div id="userprofile">
+    <p>{{ username }}</p>
+    <p class="first-name"> {{ first_name }} </p>
+    <p class="last-name"> {{ last_name }} </p>
+    <p class="email">{{ email }}</p>
+    <p class="followers"> {{ followers }}</p>
+    <p class="followings"> {{  followings }}</p>
+    {% if currentuser.is_authenticated and isuser == False %}
+    {% if followsuser == False %}
+    <button id="follow" data-user="{{ username }}">Follow</button>
+    {% else %}
+    <button id="unfollow" data-user="{{ username }}">Unfollow</button>
+    {% endif %}
+    {% endif %}
+    {% for post in posts %}
+    <div class="post">
+        <p class="post-content"> {{ post.content }} </p>
+        <p class="post-likes"> {{ post.likes }} </p>
+        <p class="post-date"> {{ post.date }} </p>
+        <p class="post-time"> {{ post.time }} </p>
+        {% if currentuser.username == username %}
+        <button class="edit" data-id="{{ post.id }}">Edit</button>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}
