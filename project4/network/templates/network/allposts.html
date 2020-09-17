@@ -9,9 +9,10 @@
 <div class="post">
     <p class="post-username"><a class="userprofile" href="#"> {{ post.username }} </a> </p>
     <p class="post-content"> {{ post.content }} </p>
-    <p class="post-likes"> {{ post.likes }} </p>
     <p class="post-date"> {{ post.date }} </p>
     <p class="post-time"> {{ post.time }} </p>
+
+    <p class="post-likes"> {{ post.likes }} </p>
     <!--<input type="image" src="{% static 'network\unlike.jpg' %}" class="like-post" data-id="{{ post.id }}" alt="Submit"
         width="30" height="30">-->
     <!--<a href="javascript:void(0)" class="like-post" data-id="{{ post.id }}">

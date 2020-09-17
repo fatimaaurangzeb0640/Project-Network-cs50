@@ -1,3 +1,55 @@
+.like-post, .unlike-post, .post-likes, .post-date{
+    display: inline;
+}
+
+.post-content{
+    font-style: italic;
+}
+.post-date, .post-time{
+    font-size: 12px;
+
+}
 .post{
     border-style: solid;
+    border-radius: 25px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 10px;
+    width: 600px;
+    margin-left: 450px;
+}
+
+button{
+    border-radius: 10px;
+}
+
+.first-name, .last-name{
+    display: inline;
+    font-size: 30px;
+    font-family: 'Lucida Console", Courier, monospace';
+}
+.un{
+    font-family: 'Lucida Console", Courier, monospace';
+    font-size: 20px;
+    text-decoration: underline;
+}
+.email{
+    margin-top: 10px;
+    font-style: italic;
+}
+.fo
+{
+    
+    font-weight: bold;
+}
+.followers, .followings{
+
+    font-style: italic;
+}
+.un, .first-name, .email, .followers, .followings
+{
+    margin-left: 450px;
+}
+#follow, #unfollow{
+    margin-left: 450px;
 }

@@ -4,12 +4,12 @@
 
 {% block body %}
 <div id="userprofile">
-    <p>{{ username }}</p>
+    <p class="un">{{ username }}'s profile</p>
     <p class="first-name"> {{ first_name }} </p>
     <p class="last-name"> {{ last_name }} </p>
-    <p class="email">{{ email }}</p>
-    <p class="followers"> {{ followers }}</p>
-    <p class="followings"> {{  followings }}</p>
+    <p class="email"> {{ email }}</p>
+    <p class="followers">Followers: {{ followers }}</p>
+    <p class="followings">Following: {{  followings }}</p>
     {% if currentuser.is_authenticated and isuser == False %}
     {% if followsuser == False %}
     <button id="follow" data-user="{{ username }}">Follow</button>
@@ -20,9 +20,11 @@
     {% for post in items %}
     <div class="post">
         <p class="post-content"> {{ post.content }} </p>
-        <p class="post-likes"> {{ post.likes }} </p>
         <p class="post-date"> {{ post.date }} </p>
         <p class="post-time"> {{ post.time }} </p>
+        <p class="post-likes"> {{ post.likes }} </p>
+
+
         {% if post.liked == False %}
         <a href="javascript:void(0)" class="like-post" data-id="{{ post.id }}">
             <img src="{% static 'network\unlike.jpg' %}" width="30" height="30" />

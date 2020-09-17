@@ -44,8 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         .then(data => {
                             console.log(data.followers);
                             console.log(data.followings);
-                            followers.innerHTML = data.followers;
-                            followings.innerHTML = data.followings;
+                            followers.innerHTML = "Followers: " + data.followers;
+                            followings.innerHTML = "Followings: " + data.followings;
                         })
                 }, 500);
             }
@@ -99,8 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         .then(data => {
                             console.log(data.followers);
                             console.log(data.followings);
-                            followers.innerHTML = data.followers;
-                            followings.innerHTML = data.followings;
+                            followers.innerHTML = "Followers: " + data.followers;
+                            followings.innerHTML = "Followings: " + data.followings;
                         })
                 }, 500);
             }
@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     imglink.href = "javascript:void(0)";
                     imglink.className = "unlike-post";
                     imglink.dataset.id = post_id;
+                    //imglink.style.display = "inline";
                     imglink.append(like);
 
                     var pd = element.parentElement.parentElement;
@@ -239,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     imglinku.href = "javascript:void(0)";
                     imglinku.className = "like-post";
                     imglinku.dataset.id = post_id;
+                    //imglinku.style.display = "inline";
                     imglinku.append(unlike);
 
                     var pdu = element.parentElement.parentElement;
