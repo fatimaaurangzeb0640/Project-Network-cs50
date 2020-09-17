@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
-    //To open follow a user
+    //To follow a user
     document.addEventListener('click', event => {
         const element = event.target;
         if (element.id === 'follow') {
@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 element.id = "unfollow";
             };
             request.send();
+
+
             // follow('follow')
         };
         //   if (element.id === 'unfollow') {
@@ -31,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // };
     });
 
-    //To open unfollow a user
+    //To unfollow a user
     document.addEventListener('click', event => {
         const element = event.target;
         if (element.id === 'unfollow') {
@@ -103,91 +105,128 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
 
+    //To like a post
+    document.addEventListener('click', event => {
+        const element = event.target;
+        //console.log(element.parentElement);
+        if (element.parentElement.className === 'like-post') {
+            var post_id = element.parentElement.dataset.id;
+            console.log(post_id);
+            fetch(`/likepost?post_id=${post_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    console.log(data.post_id);
+                    var unlike = element.parentElement;
+                    unlike.style.display = "none";
+                    var like = document.createElement('img');
+                    like.src = "static/network/like.jpg";
+                    like.width = "30";
+                    like.height = "30";
+                    var imglink = document.createElement('a');
+                    imglink.href = "javascript:void(0)";
+                    imglink.className = "unlike-post";
+                    imglink.dataset.id = post_id;
+                    imglink.append(like);
+
+                    var pd = element.parentElement.parentElement;
+                    console.log(pd);
+                    var pdchildren = pd.children;
+                    for (i = 0; i < pdchildren.length; i++) {
+                        if (pdchildren[i].className === "edit") {
+                            var editb = pdchildren[i];
+                            editb.style.display = "none";
+
+                        }
+                        if (pdchildren[i].className === "post-likes") {
+                            var no_of_likes = pdchildren[i];
+                            fetch(`/getlikes?post_id=${post_id}`)
+                                .then(response => response.json())
+                                .then(data => { no_of_likes.innerHTML = data.likes; })
+                        }
+                    }
+
+                    pd.append(imglink);
+                    editb.style.display = "inline";
+                    pd.append(editb);
+                    console.log(editb);
+                    console.log(imglink.className);
+                    console.log(imglink.dataset.id);
 
 
+                })
 
-
-
-
-
-
-
-
-
-
-    /* function follow(followorunfollow)
-     var username = document.getElementById(followorunfollow).dataset.user;
-     console.log(username);
-     const request = new XMLHttpRequest();
-     request.open(`GET`, `/${username}/${followorunfollow}`, true);
-     request.onload = () => {
-         //follow = document.getElementById(followorunfollow).innerHTML
-         //window.location.replace(`${username}`)
-         element.innerHTML = followorunfollow;
-         element.id = followorunfollow;
-     };
-     request.send();
- 
- });
- */
-    function load() {
-
-        // Set start and end post numbers, and update counter
-        const start = 1;
-        const end = 10;
-        //counter = end + 1;
-
-        // Get new posts and add posts
-        /* fetch(`/getposts?start=${start}&end=${end}`)
-             .then(response => response.json())
-             .then(data => {
-                 data.posts.forEach(add_post);
-             })
-             */
-        fetch(`/getposts`)
-            .then(response => response.json())
-            .then(data => {
-                data.posts[1]["likes"]
-                data.posts.forEach(add_post);
-            })
-    };
-
-    function add_post(contents) {
-        // Create new post
-        const post = document.createElement('div');
-        post.className = 'post';
-        const id = contents["id"]
-        if (id !== 0) {
-            //console.log(contents["id"]);
-            const poster = document.createElement('a');
-            poster.className = "poster";
-            poster.innerHTML = contents["poster"];
-            poster.href = "#";
-
-            const content = document.createElement('p');
-            content.className = "content";
-            content.innerHTML = contents["content"];
-            const date = document.createElement('p');
-            date.className = "date";
-            date.innerHTML = contents["date"];
-            const time = document.createElement('time');
-            time.className = "time";
-            time.innerHTML = contents["time"];
-            const likes = document.createElement('likes');
-            likes.className = "likes";
-            likes.innerHTML = "likes: " + contents["likes"];
-            //const editbutton = document.createElement('button');
-            // editbutton.className = "editpost";
-            //editbutton.innerHTML = "Edit Post";
-
-            post.append(poster);
-            post.append(content);
-            post.append(likes);
-            post.append(date);
-            post.append(time);
-            //post.append(editbutton);
         }
-        document.getElementById('posts').append(post);
-    };
+    })
+
+
+    //To unlike a post
+    document.addEventListener('click', event => {
+        const element = event.target;
+        console.log(element.parentElement);
+        if (element.parentElement.className === 'unlike-post') {
+            var post_id = element.parentElement.dataset.id;
+            console.log(post_id);
+            fetch(`/unlikepost?post_id=${post_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    console.log(data.post_id);
+                    var like = element.parentElement;
+                    like.style.display = "none";
+                    var unlike = document.createElement('img');
+                    unlike.src = "static/network/unlike.jpg";
+                    unlike.width = "30";
+                    unlike.height = "30";
+                    var imglinku = document.createElement('a');
+                    imglinku.href = "javascript:void(0)";
+                    imglinku.className = "like-post";
+                    imglinku.dataset.id = post_id;
+                    imglinku.append(unlike);
+
+                    var pdu = element.parentElement.parentElement;
+                    //console.log(pdu);
+                    var pdchildren = pdu.children;
+                    for (i = 0; i < pdchildren.length; i++) {
+                        if (pdchildren[i].className === "edit") {
+                            var editb = pdchildren[i];
+                            editb.style.display = "none";
+
+                        }
+                        if (pdchildren[i].className === "post-likes") {
+                            var no_of_likes = pdchildren[i];
+                            fetch(`/getlikes?post_id=${post_id}`)
+                                .then(response => response.json())
+                                .then(data => { no_of_likes.innerHTML = data.likes; })
+                        }
+                    }
+                    pdu.append(imglinku);
+                    editb.style.display = "inline";
+                    pdu.append(editb);
+                    console.log(editb);
+                    console.log(imglinku.className);
+                    console.log(imglinku.dataset.id);
+
+
+                })
+        }
+    })
+
+
+})
+
+/* function follow(followorunfollow)
+ var username = document.getElementById(followorunfollow).dataset.user;
+ console.log(username);
+ const request = new XMLHttpRequest();
+ request.open(`GET`, `/${username}/${followorunfollow}`, true);
+ request.onload = () => {
+     //follow = document.getElementById(followorunfollow).innerHTML
+     //window.location.replace(`${username}`)
+     element.innerHTML = followorunfollow;
+     element.id = followorunfollow;
+ };
+ request.send();
 
 });
+*/

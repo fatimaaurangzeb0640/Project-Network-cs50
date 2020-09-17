@@ -5,9 +5,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from datetime import date, datetime
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 
-from .models import User, Post, Follow
+from .models import *
 
 
 def index(request):
@@ -111,16 +112,48 @@ def allposts(request):
     postsc = posts.count()
     poststosend = []
     for i in range(0, postsc):
+         #To check if the user likes the post
+        liked = True
+        try:
+            Like.objects.get(Q(liker=request.user) & Q(post=posts[i]))
+        except Like.DoesNotExist:
+            liked = False
+    
+        #To get the number of likes
+        likes = posts[i].postliked.all().count()
+
         poststosend.append({"content":str(posts[i].content), 
         "date":str(posts[i].date), 
         "time":str(posts[i].time), 
-        "likes":posts[i].likes, 
+        "likes":likes, 
         "username":str(posts[i].poster.username),
-        "id": posts[i].id})
+        "id": posts[i].id,
+        "liked":liked,
+        })
     poststosend.reverse()
     json.dumps(poststosend)
+
+    #For pagiantion: 10 posts on one page
+    paginator = Paginator(poststosend, 10)
+    page = request.GET.get('page')
+
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        items = paginator.page(1)
+    except EmptyPage:
+        items = paginator.page(paginator.num_pages)
+    
+    index = items.number - 1
+    max_index = len(paginator.page_range)
+    start_index = index - 5 if index >= 5 else 0
+    end_index = index + 5 if index <= max_index - 5 else max_index
+    page_range = paginator.page_range[start_index:end_index] 
+
     context = {
             "posts" : poststosend,
+            "page_range" : page_range,
+            "items": items, 
             "currentuser": request.user
         }
     return render(request, "network/allposts.html", context)
@@ -149,13 +182,44 @@ def userprofile(request, username):
     postsc = user.posters.all().count()
     poststosend = []
     for i in range(0, postsc):
+        #To check if the user likes their own post
+        liked = True
+        try:
+            Like.objects.get(Q(liker=currentuser) & Q(post=posts[i]))
+        except Like.DoesNotExist:
+            liked = False
+        
+        #To get the number of likes
+        likes = posts[i].postliked.all().count()
+
         poststosend.append({"content":str(posts[i].content), 
         "date":str(posts[i].date), 
         "time":str(posts[i].time), 
-        "likes":posts[i].likes,
-        "id": posts[i].id})
+        "likes":likes,
+        "id": posts[i].id,
+        "liked":liked
+        })
     poststosend.reverse()
     json.dumps(poststosend)
+
+    #For pagiantion: 10 posts on one page
+    paginator = Paginator(poststosend, 10)
+    page = request.GET.get('page')
+
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        items = paginator.page(1)
+    except EmptyPage:
+        items = paginator.page(paginator.num_pages)
+    
+    index = items.number - 1
+    max_index = len(paginator.page_range)
+    start_index = index - 5 if index >= 5 else 0
+    end_index = index + 5 if index <= max_index - 5 else max_index
+    page_range = paginator.page_range[start_index:end_index] 
+
+
     context = {
         "currentuser": currentuser,
         "followsuser": followsuser,
@@ -166,7 +230,9 @@ def userprofile(request, username):
         "email": email,
         "followers": followers,
         "followings": followings,
-        "posts": poststosend
+        "posts": poststosend,
+        "page_range" : page_range,
+        "items": items, 
     }
     return render(request, "network/userprofile.html", context)    
 
@@ -203,16 +269,47 @@ def followingposts(request):
             postsc = len(posts)
             poststosend = []
             for i in range(0, postsc):
+                #To check if the user likes the post
+                liked = True
+                try:
+                    Like.objects.get(Q(liker=request.user) & Q(post=posts[i]))
+                except Like.DoesNotExist:
+                    liked = False
+                
+                #To get the number of likes
+                likes = posts[i].postliked.all().count()
+
                 poststosend.append({"content":str(posts[i].content), 
                 "date":str(posts[i].date), 
                 "time":str(posts[i].time), 
-                "likes":posts[i].likes, 
+                "likes":likes, 
                 "username":str(posts[i].poster.username),
-                "id": posts[i].id})
+                "id": posts[i].id,
+                "liked":liked,})
             poststosend.reverse()
             json.dumps(poststosend)
+
+            #For pagiantion: 10 posts on one page
+            paginator = Paginator(poststosend, 10)
+            page = request.GET.get('page')
+
+            try:
+                items = paginator.page(page)
+            except PageNotAnInteger:
+                items = paginator.page(1)
+            except EmptyPage:
+                items = paginator.page(paginator.num_pages)
+    
+            index = items.number - 1
+            max_index = len(paginator.page_range)
+            start_index = index - 5 if index >= 5 else 0
+            end_index = index + 5 if index <= max_index - 5 else max_index
+            page_range = paginator.page_range[start_index:end_index] 
+
             context = {
-                    "posts" : poststosend
+                    "posts" : poststosend,
+                    "page_range" : page_range,
+                    "items": items, 
                 }
             return render(request, "network/allposts.html", context) 
     else:
@@ -234,4 +331,41 @@ def editpost(request):
         "message": "updated",
 
     }) 
+
+def likepost(request):
+    liker = request.user
+    post_id = int(request.GET.get("post_id"))
+    post = Post.objects.get(pk=post_id)
+    like = Like.objects.create(liker=liker, post=post)
+    like.save()
+
+    return JsonResponse({
+        "post_id": post_id,
+        "message": "liked",
+
+    }) 
+
+def unlikepost(request):
+    liker = request.user
+    post_id = int(request.GET.get("post_id"))
+    post = Post.objects.get(pk=post_id)
+    like = Like.objects.get(Q(liker=liker) & Q(post=post))
+    like.delete()
+
+    return JsonResponse({
+        "post_id": post_id,
+        "message": "unliked",
+
+    }) 
+
+def getlikes(request):
+    post_id = int(request.GET.get("post_id"))
+    post = Post.objects.get(pk=post_id)
+    likes = post.postliked.all().count()
+
+    return JsonResponse({
+        "likes": likes,
+
+    }) 
+
 

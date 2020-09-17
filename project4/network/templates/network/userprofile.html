@@ -1,5 +1,7 @@
 {% extends "network/layout.html" %}
 
+{% load static %}
+
 {% block body %}
 <div id="userprofile">
     <p>{{ username }}</p>
@@ -15,17 +17,30 @@
     <button id="unfollow" data-user="{{ username }}">Unfollow</button>
     {% endif %}
     {% endif %}
-    {% for post in posts %}
+    {% for post in items %}
     <div class="post">
         <p class="post-content"> {{ post.content }} </p>
         <p class="post-likes"> {{ post.likes }} </p>
         <p class="post-date"> {{ post.date }} </p>
         <p class="post-time"> {{ post.time }} </p>
+        {% if post.liked == False %}
+        <a href="javascript:void(0)" class="like-post" data-id="{{ post.id }}">
+            <img src="{% static 'network\unlike.jpg' %}" width="30" height="30" />
+        </a>
+        {% else %}
+        <a href="javascript:void(0)" class="unlike-post" data-id="{{ post.id }}">
+            <img src="{% static 'network\like.jpg' %}" width="30" height="30" />
+        </a>
+        {% endif %}
+        <!-- <input type="image" src="{% static 'network\unlike.jpg' %}" class="like-post" data-id="{{ post.id }}"
+            alt="Submit" width="30" height="30">-->
         {% if currentuser.username == username %}
         <button class="edit" data-id="{{ post.id }}">Edit</button>
         {% endif %}
     </div>
     {% endfor %}
+
+    {% include "network/pagination.html" %}
 </div>
 
 
