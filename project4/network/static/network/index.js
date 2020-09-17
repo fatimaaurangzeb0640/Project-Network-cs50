@@ -25,7 +25,39 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             request.send();
 
+            //To update followers and followings without loading the page when following a user
+            var profilediv = element.parentElement;
+            var profiledivchildren = profilediv.children;
+            for (i = 0; i < profiledivchildren.length; i++) {
+                if (profiledivchildren[i].className === "followers") {
+                    var followers = profiledivchildren[i];
+                }
+                if (profiledivchildren[i].className === "followings") {
+                    var followings = profiledivchildren[i];
+                }
+            }
+            timeFunction();
+            function timeFunction() {
+                setTimeout(function () {
+                    fetch(`/getfollowdetails?username=${username}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data.followers);
+                            console.log(data.followings);
+                            followers.innerHTML = data.followers;
+                            followings.innerHTML = data.followings;
+                        })
+                }, 500);
+            }
 
+            /* fetch(`/getfollowdetails?username=${username}`)
+                 .then(response => response.json())
+                 .then(data => {
+                     console.log(data.followers);
+                     console.log(data.followings);
+                     followers.innerHTML = data.followers;
+                     followings.innerHTML = data.followings;
+                 })*/
             // follow('follow')
         };
         //   if (element.id === 'unfollow') {
@@ -47,6 +79,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
             };
             request.send();
+
+            //To update followers and followings without loading the page when unfollowing a user
+            var profilediv = element.parentElement;
+            var profiledivchildren = profilediv.children;
+            for (i = 0; i < profiledivchildren.length; i++) {
+                if (profiledivchildren[i].className === "followers") {
+                    var followers = profiledivchildren[i];
+                }
+                if (profiledivchildren[i].className === "followings") {
+                    var followings = profiledivchildren[i];
+                }
+            }
+            timeFunction();
+            function timeFunction() {
+                setTimeout(function () {
+                    fetch(`/getfollowdetails?username=${username}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data.followers);
+                            console.log(data.followings);
+                            followers.innerHTML = data.followers;
+                            followings.innerHTML = data.followings;
+                        })
+                }, 500);
+            }
         };
     });
 

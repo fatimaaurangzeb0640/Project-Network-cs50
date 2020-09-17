@@ -366,6 +366,18 @@ def getlikes(request):
     return JsonResponse({
         "likes": likes,
 
+    })
+
+def getfollowdetails(request):
+    username = request.GET.get("username")
+    user = User.objects.get(username=username)
+    followers = user.followerlist.all().count()
+    followings = user.followinglist.all().count()
+
+    return JsonResponse({
+        "followers": followers,
+        "followings": followings,
     }) 
+ 
 
 
